@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/activity_main.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/buy_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/buy_page_item.xml" value="0.1" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/buy_page_layout.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/explore_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/forest_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/head.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/inventory_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/inventory_page_item.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/manufacture_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/manufacture_page_item.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/market_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/nuy_page_item.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/produce_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/sell_page.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/sell_page_item.xml" value="0.17552083333333332" />
+        <entry key="..\:/AndroidProjects/VillageRPG/app/src/main/res/layout/start_page.xml" value="0.3333333333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

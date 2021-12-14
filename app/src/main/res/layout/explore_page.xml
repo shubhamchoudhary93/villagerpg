@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/head"
+            layout="@layout/head"/>
+
+        <Button
+            android:id="@+id/forest_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Forest" />
+
+        <Button
+            android:id="@+id/barren_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Barren land" />
+
+        <Button
+            android:id="@+id/pond_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pond" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Convert Food into Stamina" />
+
+        <Spinner
+            android:id="@+id/food_dropdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/food_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/convert_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Convert" />
+
+
+    </LinearLayout>
+</layout>

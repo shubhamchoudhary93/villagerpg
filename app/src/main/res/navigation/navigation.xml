@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/startPageFragment">
+
+    <fragment
+        android:id="@+id/startPageFragment"
+        android:name="com.shubham.villagerpg.StartPageFragment"
+        android:label="StartPageFragment"
+        tools:layout="@layout/start_page" >
+        <action
+            android:id="@+id/action_startPageFragment_to_producePageFragment"
+            app:destination="@id/producePageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_manufacturePageFragment"
+            app:destination="@id/manufacturePageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_marketPageFragment"
+            app:destination="@id/marketPageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_inventoryPageFragment"
+            app:destination="@id/inventoryPageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_explorePageFragment"
+            app:destination="@id/explorePageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/producePageFragment"
+        android:name="com.shubham.villagerpg.ProducePageFragment"
+        android:label="ProducePageFragment"
+        tools:layout="@layout/produce_page"/>
+    <fragment
+        android:id="@+id/manufacturePageFragment"
+        android:name="com.shubham.villagerpg.ManufacturePageFragment"
+        android:label="ManufacturePageFragment"
+        tools:layout="@layout/manufacture_page"/>
+    <fragment
+        android:id="@+id/marketPageFragment"
+        android:name="com.shubham.villagerpg.MarketPageFragment"
+        android:label="MarketPageFragment"
+        tools:layout="@layout/market_page">
+        <action
+            android:id="@+id/action_marketPageFragment_to_buyPageFragment"
+            app:destination="@id/buyPageFragment" />
+        <action
+            android:id="@+id/action_marketPageFragment_to_sellPageFragment"
+            app:destination="@id/sellPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/buyPageFragment"
+        android:name="com.shubham.villagerpg.BuyPageFragment"
+        android:label="BuyPageFragment"
+        tools:layout="@layout/buy_page"/>
+    <fragment
+        android:id="@+id/sellPageFragment"
+        android:name="com.shubham.villagerpg.SellPageFragment"
+        android:label="SellPageFragment"
+        tools:layout="@layout/sell_page"/>
+    <fragment
+        android:id="@+id/inventoryPageFragment"
+        android:name="com.shubham.villagerpg.InventoryPageFragment"
+        android:label="InventoryPageFragment"
+        tools:layout="@layout/inventory_page"/>
+    <fragment
+        android:id="@+id/explorePageFragment"
+        android:name="com.shubham.villagerpg.ExplorePageFragment"
+        android:label="ExplorePageFragment"
+        tools:layout="@layout/explore_page">
+        <action
+            android:id="@+id/action_explorePageFragment_to_forestPageFragment"
+            app:destination="@id/forestPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forestPageFragment"
+        android:name="com.shubham.villagerpg.ForestPageFragment"
+        android:label="ForestPageFragment"
+        tools:layout="@layout/forest_page"/>
+</navigation>
