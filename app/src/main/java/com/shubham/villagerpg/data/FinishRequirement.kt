@@ -9,9 +9,9 @@ data class FinishRequirement(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     @ColumnInfo(name = "inventoryFinishId")
-    var inventoryFinishId: Int = 0,
+    var inventoryFinish: String = "",
     @ColumnInfo(name = "inventoryId")
-    var inventoryId: Int = 0,
+    var inventory: String = "",
     @ColumnInfo(name = "quantity")
     var quantity: Int = 0
 )

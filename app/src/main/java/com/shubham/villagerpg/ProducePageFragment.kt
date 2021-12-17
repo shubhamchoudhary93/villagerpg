@@ -148,9 +148,9 @@ class ProducePageFragment : Fragment() {
                     }
                     else -> {
                         user.farmStatus[i - 10000] = 0
-                        val cropSelectedId =
-                            inventoryDatabase.getCorresponding(user.farmCrop[i - 10000].toLong())
-                        val cropSelected = inventoryDatabase.get(cropSelectedId)
+                        val cropSelectedName =
+                            inventoryDatabase.getCorresponding(user.farmCrop[i - 10000])
+                        val cropSelected = inventoryDatabase.getName(cropSelectedName)
                         println(cropSelected?.name)
                         if (cropSelected != null) {
                             cropSelected.quantity++
@@ -168,7 +168,7 @@ class ProducePageFragment : Fragment() {
                 when {
                     user.campStatus[i - 30000] == 0 -> {
                         binding.producePage.visibility = View.VISIBLE
-                        itemList = inventoryDatabase.getAvailableItem("item")
+                        itemList = inventoryDatabase.getAvailableItem("raw")
 
                         val names: MutableList<String> = mutableListOf()
                         var text: String
@@ -195,7 +195,7 @@ class ProducePageFragment : Fragment() {
                     else -> {
                         user.campStatus[i - 30000] = 0
                         val itemSelected =
-                            inventoryDatabase.get(user.produceItem[i - 30000].toLong())
+                            inventoryDatabase.getName(user.produceItem[i - 30000])
                         if (itemSelected != null) {
                             itemSelected.quantity++
                             user.xp += itemSelected.xp
@@ -231,7 +231,7 @@ class ProducePageFragment : Fragment() {
 
             binding.root.findViewById<TextView>(farmSelected + 10000).text = busy
 
-            user.farmCrop[farmSelected] = cropSelected.id
+            user.farmCrop[farmSelected] = cropSelected.name
             user.farmStatus[farmSelected] = 1
             user.plantStopTime[farmSelected] = System.currentTimeMillis() + cropSelected.time
             binding.farmPage.visibility = View.GONE
@@ -244,7 +244,7 @@ class ProducePageFragment : Fragment() {
             if (itemSelected.cost <= user.money) {
                 binding.root.findViewById<TextView>(campSelected + 30000).text = busy
                 user.money -= itemSelected.cost
-                user.produceItem[campSelected] = itemSelected.id
+                user.produceItem[campSelected] = itemSelected.name
                 user.campStatus[campSelected] = 1
                 user.produceStopTime[campSelected] = System.currentTimeMillis() + itemSelected.time
                 binding.producePage.visibility = View.GONE

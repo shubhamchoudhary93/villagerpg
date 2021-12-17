@@ -48,45 +48,45 @@ data class User(
         0,
         0
     ),
-    var farmCrop: MutableList<Int> = mutableListOf<Int>(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+    var farmCrop: MutableList<String> = mutableListOf<String>(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     ),
-    var produceItem: MutableList<Int> = mutableListOf<Int>(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+    var produceItem: MutableList<String> = mutableListOf<String>(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     ),
-    var manufactureItem: MutableList<Int> = mutableListOf<Int>(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+    var manufactureItem: MutableList<String> = mutableListOf<String>(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     ),
-    var foodItem: MutableList<Int> = mutableListOf<Int>(
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+    var foodItem: MutableList<String> = mutableListOf<String>(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
     ),
     var plantStopTime: MutableList<Long> = mutableListOf<Long>(
         0L,

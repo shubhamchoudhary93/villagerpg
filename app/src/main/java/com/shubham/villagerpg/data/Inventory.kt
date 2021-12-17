@@ -21,17 +21,17 @@ data class Inventory(
     @ColumnInfo(name = "xp")
     var xp: Int = 0,
     @ColumnInfo(name = "time")
-    var time: Int = 0,
+    var time: Long = 0,
     @ColumnInfo(name = "unlockLevel")
     var unlockLevel: Int = 0,
     @ColumnInfo(name = "quantity")
     var quantity: Int = 0,
     @ColumnInfo(name = "corresponding")
-    var corresponding: Int = 0,
+    var corresponding: String = "",
     @ColumnInfo(name = "can_buy")
     var canBuy: Int = 0,
     @ColumnInfo(name = "can_sell")
     var canSell: Int = 0,
     @ColumnInfo(name = "stamina")
-    var stamina: Int = 0,
+    var stamina: Int = 0
 )

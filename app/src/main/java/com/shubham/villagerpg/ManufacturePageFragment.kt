@@ -148,7 +148,7 @@ class ManufacturePageFragment : Fragment() {
                         user.factoryStatus[i] = 0
 
                         val productSelected =
-                            inventoryDatabase.get(user.manufactureItem[i].toLong())
+                            inventoryDatabase.getName(user.manufactureItem[i])
                         if (productSelected != null) {
                             productSelected.quantity++
                             user.xp += productSelected.xp
@@ -192,7 +192,7 @@ class ManufacturePageFragment : Fragment() {
                         user.kitchenStatus[i] = 0
 
                         val foodSelected =
-                            inventoryDatabase.get(user.foodItem[i].toLong())
+                            inventoryDatabase.getName(user.foodItem[i])
                         println(foodSelected?.name)
                         if (foodSelected != null) {
                             foodSelected.quantity++
@@ -220,13 +220,13 @@ class ManufacturePageFragment : Fragment() {
                     binding.itemTime.text = (itemSelected.time / 1000).toString()
 
                     val requirementList = finishRequirementDatabase.getByRequirementID(
-                        inventoryDatabase.getCorresponding(itemSelected.corresponding.toLong())
+                        itemSelected.name
                     )
 
                     val inventoryList = mutableListOf<Inventory>()
 
                     for (i in requirementList.indices) {
-                        inventoryDatabase.get(requirementList[i].inventoryId.toLong())
+                        inventoryDatabase.getName(requirementList[i].inventory)
                             ?.let { it1 -> inventoryList.add(it1) }
                     }
                     var text = ""
@@ -258,13 +258,13 @@ class ManufacturePageFragment : Fragment() {
                     binding.foodTime.text = (foodSelected.time / 1000).toString()
 
                     val requirementList = finishRequirementDatabase.getByRequirementID(
-                        inventoryDatabase.getCorresponding(foodSelected.corresponding.toLong())
+                        foodSelected.name
                     )
 
                     val inventoryList = mutableListOf<Inventory>()
 
                     for (i in requirementList.indices) {
-                        inventoryDatabase.get(requirementList[i].inventoryId.toLong())
+                        inventoryDatabase.getName(requirementList[i].inventory)
                             ?.let { it1 -> inventoryList.add(it1) }
                     }
                     var text = ""
@@ -285,13 +285,13 @@ class ManufacturePageFragment : Fragment() {
             val productSelected = productList[binding.productDropdown.selectedItemPosition]
             if (productSelected.cost <= user.money) {
                 val requirementList = finishRequirementDatabase.getByRequirementID(
-                    inventoryDatabase.getCorresponding(productSelected.corresponding.toLong())
+                    productSelected.name
                 )
 
                 val inventoryList = mutableListOf<Inventory>()
 
                 for (i in requirementList.indices) {
-                    inventoryDatabase.get(requirementList[i].inventoryId.toLong())
+                    inventoryDatabase.getName(requirementList[i].inventory)
                         ?.let { it1 -> inventoryList.add(it1) }
                 }
 
@@ -312,7 +312,7 @@ class ManufacturePageFragment : Fragment() {
                     binding.root.findViewById<TextView>(factorySelected + 10000).text =
                         busy
 
-                    user.manufactureItem[factorySelected] = productSelected.id
+                    user.manufactureItem[factorySelected] = productSelected.name
                     user.factoryStatus[factorySelected] = 1
                     user.manufactureStopTime[factorySelected] =
                         System.currentTimeMillis() + productSelected.time
@@ -327,13 +327,13 @@ class ManufacturePageFragment : Fragment() {
             val foodSelected = foodList[binding.foodDropdown.selectedItemPosition]
             if (foodSelected.cost <= user.money) {
                 val requirementList = finishRequirementDatabase.getByRequirementID(
-                    inventoryDatabase.getCorresponding(foodSelected.corresponding.toLong())
+                    foodSelected.name
                 )
 
                 val inventoryList = mutableListOf<Inventory>()
 
                 for (i in requirementList.indices) {
-                    inventoryDatabase.get(requirementList[i].inventoryId.toLong())
+                    inventoryDatabase.getName(requirementList[i].inventory)
                         ?.let { it1 -> inventoryList.add(it1) }
                 }
 
@@ -354,7 +354,7 @@ class ManufacturePageFragment : Fragment() {
 
                     binding.root.findViewById<TextView>(kitchenSelected + 20000).text = busy
 
-                    user.foodItem[kitchenSelected] = foodSelected.id
+                    user.foodItem[kitchenSelected] = foodSelected.name
                     user.kitchenStatus[kitchenSelected] = 1
                     user.cookingStopTime[kitchenSelected] =
                         System.currentTimeMillis() + foodSelected.time

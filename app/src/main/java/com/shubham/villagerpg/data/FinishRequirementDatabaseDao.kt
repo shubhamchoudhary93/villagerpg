@@ -23,6 +23,6 @@ interface FinishRequirementDatabaseDao {
     fun clear()
 
     @Query("SELECT * from finish_requirement_data_table WHERE inventoryFinishId = :corresponding")
-    fun getByRequirementID(corresponding: Long): MutableList<FinishRequirement>
+    fun getByRequirementID(corresponding: String): MutableList<FinishRequirement>
 
 }
