@@ -3,21 +3,32 @@ package com.shubham.villagerpg
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.shubham.villagerpg.data.*
-import com.shubham.villagerpg.databinding.InventoryPageBinding
+import com.shubham.villagerpg.databinding.QuestPageBinding
 
-class InventoryPageFragment : Fragment() {
+class QuestPageFragment : Fragment() {
 
-    private lateinit var binding: InventoryPageBinding
-    private lateinit var inventoryDatabase: InventoryDatabaseDao
+    private lateinit var binding: QuestPageBinding
+    private lateinit var questDatabase: QuestDatabaseDao
     private lateinit var data: SharedPreferences
-    private var user = User()
+    var user = User()
+    lateinit var mainHandler: Handler
+
+    private val updateScreenTask = object : Runnable {
+        override fun run() {
+            user.money++
+            setScreenData()
+            mainHandler.postDelayed(this, 1000)
+        }
+    }
 
     private fun setScreenData() {
         binding.head.name.text = user.name
@@ -33,8 +44,10 @@ class InventoryPageFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.inventory_page, container, false
+            R.layout.quest_page, container, false
         )
+
+        questDatabase = QuestDatabase.getInstance(requireContext()).questDatabaseDao
 
         data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
         user = if (data.contains("User")) {
@@ -47,18 +60,22 @@ class InventoryPageFragment : Fragment() {
             }
         }
 
-        inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
+        mainHandler = Handler(Looper.getMainLooper())
 
-        val list = inventoryDatabase.getAvailable()
+        val list = questDatabase.getAvailable()
 
-        val adapter = InventoryPageAdaptor(InventoryPageAdaptor.InventoryListener {
-            Toast.makeText(context, "yayy", Toast.LENGTH_SHORT).show()
+        val adapter = QuestPageAdaptor(QuestPageAdaptor.QuestListener {
+
+            val actionDetail =
+                QuestPageFragmentDirections.actionQuestPageFragmentToQuestDetailsPageFragment()
+            actionDetail.id = it
+            view?.findNavController()?.navigate(actionDetail)
         })
 
         binding.list.adapter = adapter
-        setScreenData()
+
         adapter.submitList(list)
-        val title = "Inventory"
+        val title = "Quest"
         binding.head.title.text = title
         return binding.root
     }
@@ -67,11 +84,13 @@ class InventoryPageFragment : Fragment() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
+        mainHandler.removeCallbacks(updateScreenTask)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
+        mainHandler.post(updateScreenTask)
     }
 
 }

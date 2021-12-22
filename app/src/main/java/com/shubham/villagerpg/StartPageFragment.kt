@@ -87,6 +87,10 @@ class StartPageFragment : Fragment() {
             view?.findNavController()
                 ?.navigate(R.id.action_startPageFragment_to_explorePageFragment)
         }
+        binding.questButton.setOnClickListener {
+            view?.findNavController()
+                ?.navigate(R.id.action_startPageFragment_to_questPageFragment)
+        }
     }
 
     override fun onPause() {

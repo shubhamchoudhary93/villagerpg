@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_startPageFragment_to_explorePageFragment"
             app:destination="@id/explorePageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_questPageFragment"
+            app:destination="@id/questPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/producePageFragment"
@@ -77,4 +80,26 @@
         android:name="com.shubham.villagerpg.ForestPageFragment"
         android:label="ForestPageFragment"
         tools:layout="@layout/forest_page"/>
+    <fragment
+        android:id="@+id/questPageFragment"
+        android:name="com.shubham.villagerpg.QuestPageFragment"
+        android:label="QuestPageFragment"
+        tools:layout="@layout/quest_page">
+        <action
+            android:id="@+id/action_questPageFragment_to_questDetailsPageFragment"
+            app:destination="@id/questDetailsPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questDetailsPageFragment"
+        android:name="com.shubham.villagerpg.QuestDetailsPageFragment"
+        android:label="QuestDetailsPageFragment"
+        tools:layout="@layout/quest_details_page">
+        <argument
+            android:name="id"
+            app:argType="long"
+            android:defaultValue="0L" />
+        <action
+            android:id="@+id/action_questDetailsPageFragment_to_questPageFragment"
+            app:destination="@id/questPageFragment" />
+    </fragment>
 </navigation>

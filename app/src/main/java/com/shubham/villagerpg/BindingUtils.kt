@@ -3,13 +3,22 @@ package com.shubham.villagerpg
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.shubham.villagerpg.data.Inventory
+import com.shubham.villagerpg.data.Quest
 
 @BindingAdapter("nameString")
 fun TextView.setNameString(item: Inventory) {
     item.let {
         text = item.name
     }
+
+}@BindingAdapter("nameString")
+fun TextView.setNameString(item: Quest) {
+    item.let {
+        text = item.name
+    }
 }
+
+
 
 @BindingAdapter("quantityString")
 fun TextView.setQuantityString(item: Inventory) {
