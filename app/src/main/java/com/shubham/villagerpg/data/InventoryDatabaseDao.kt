@@ -28,8 +28,8 @@ interface InventoryDatabaseDao {
     @Query("SELECT * from inventory_data_table WHERE type= :type AND quantity>0")
     fun getAvailableByType(type: String): MutableList<Inventory>
 
-    @Query("SELECT * from inventory_data_table WHERE type= :type")
-    fun getAvailableItem(type: String): MutableList<Inventory>
+    @Query("SELECT * from inventory_data_table WHERE type= :type AND unlockLevel <= :level")
+    fun getAvailableItem(type: String, level: Int): MutableList<Inventory>
 
     @Query("SELECT corresponding from inventory_data_table WHERE name = :name")
     fun getCorresponding(name: String): String
@@ -40,7 +40,7 @@ interface InventoryDatabaseDao {
     @Query("SELECT * from inventory_data_table WHERE quantity>0 AND type != :type")
     fun getAvailable(type: String): MutableList<Inventory>
 
-    @Query("SELECT * from inventory_data_table WHERE can_buy= 1 AND unlockLevel >= :level")
+    @Query("SELECT * from inventory_data_table WHERE can_buy= 1 AND unlockLevel <= :level")
     fun getAllBuy(level: Int): MutableList<Inventory>
 
     @Query("SELECT * from inventory_data_table WHERE quantity>0 AND can_sell = 1")

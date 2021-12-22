@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.shubham.villagerpg.data.*
+import com.shubham.villagerpg.data.UserFunctions.calculateLevel
 import com.shubham.villagerpg.databinding.BuyPageBinding
 import kotlin.math.floor
 
@@ -34,11 +35,12 @@ class BuyPageFragment : Fragment() {
     }
 
     private fun setScreenData() {
+        user = calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
     }
 
     override fun onCreateView(

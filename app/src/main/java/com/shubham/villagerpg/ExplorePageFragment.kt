@@ -43,7 +43,7 @@ class ExplorePageFragment : Fragment() {
 
         inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
 
-        foodList = inventoryDatabase.getAvailableItem("food")
+        foodList = inventoryDatabase.getAvailableItem("food", user.level)
 
         val names: MutableList<String> = mutableListOf()
         var text: String
@@ -69,11 +69,12 @@ class ExplorePageFragment : Fragment() {
 
 
     private fun setScreenData() {
+        user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
     }
 
     private fun setListeners() {
@@ -100,7 +101,7 @@ class ExplorePageFragment : Fragment() {
                 ) {
                     val foodSelected = foodList[position]
                     val count = binding.foodCount.text.toString().toInt()
-                    user.stamina += (count * foodSelected.stamina.toLong())
+                    user.food += (count * foodSelected.stamina.toLong())
                 }
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {

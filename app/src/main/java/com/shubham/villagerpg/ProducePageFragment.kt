@@ -2,6 +2,8 @@ package com.shubham.villagerpg
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -32,6 +34,7 @@ class ProducePageFragment : Fragment() {
     private var campSelected = 0
     private val busy = "busy"
     private val ready = "ready"
+    private lateinit var oldColors: ColorStateList
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
@@ -58,11 +61,12 @@ class ProducePageFragment : Fragment() {
     }
 
     private fun setScreenData() {
+        user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
 
         for (i in 10000..10007) {
             when {
@@ -109,9 +113,10 @@ class ProducePageFragment : Fragment() {
         setListeners()
         setScreenData()
         binding.plantButton.isEnabled = false
+        binding.produceButton.isEnabled = false
         binding.farmPage.visibility = View.GONE
         binding.producePage.visibility = View.GONE
-
+        oldColors = binding.itemCost.textColors
         return binding.root
     }
 
@@ -122,6 +127,7 @@ class ProducePageFragment : Fragment() {
                 when {
                     user.farmStatus[i - 10000] == 0 -> {
                         binding.farmPage.visibility = View.VISIBLE
+                        binding.producePage.visibility = View.GONE
                         seedList = inventoryDatabase.getAvailableByType("seed")
 
                         val names: MutableList<String> = mutableListOf()
@@ -168,7 +174,8 @@ class ProducePageFragment : Fragment() {
                 when {
                     user.campStatus[i - 30000] == 0 -> {
                         binding.producePage.visibility = View.VISIBLE
-                        itemList = inventoryDatabase.getAvailableItem("raw")
+                        binding.farmPage.visibility = View.GONE
+                        itemList = inventoryDatabase.getAvailableItem("raw", user.level)
 
                         val names: MutableList<String> = mutableListOf()
                         var text: String
@@ -224,31 +231,36 @@ class ProducePageFragment : Fragment() {
             }
         }
         binding.plantButton.setOnClickListener {
-            val cropSelected = seedList[binding.cropDropdown.selectedItemPosition]
+            if (seedList.size > 1) {
+                val cropSelected = seedList[binding.cropDropdown.selectedItemPosition]
 
-            cropSelected.quantity--
-            inventoryDatabase.update(cropSelected)
+                cropSelected.quantity--
+                inventoryDatabase.update(cropSelected)
 
-            binding.root.findViewById<TextView>(farmSelected + 10000).text = busy
+                binding.root.findViewById<TextView>(farmSelected + 10000).text = busy
 
-            user.farmCrop[farmSelected] = cropSelected.name
-            user.farmStatus[farmSelected] = 1
-            user.plantStopTime[farmSelected] = System.currentTimeMillis() + cropSelected.time
-            binding.farmPage.visibility = View.GONE
+                user.farmCrop[farmSelected] = cropSelected.name
+                user.farmStatus[farmSelected] = 1
+                user.plantStopTime[farmSelected] = System.currentTimeMillis() + cropSelected.time
+                binding.farmPage.visibility = View.GONE
+            }
 
         }
 
         binding.produceButton.setOnClickListener {
-            val itemSelected = itemList[binding.itemDropdown.selectedItemPosition]
+            if (itemList.size > 1) {
+                val itemSelected = itemList[binding.itemDropdown.selectedItemPosition]
 
-            if (itemSelected.cost <= user.money) {
-                binding.root.findViewById<TextView>(campSelected + 30000).text = busy
-                user.money -= itemSelected.cost
-                user.produceItem[campSelected] = itemSelected.name
-                user.campStatus[campSelected] = 1
-                user.produceStopTime[campSelected] = System.currentTimeMillis() + itemSelected.time
-                binding.producePage.visibility = View.GONE
-            } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+                if (itemSelected.cost <= user.money) {
+                    binding.root.findViewById<TextView>(campSelected + 30000).text = busy
+                    user.money -= itemSelected.cost
+                    user.produceItem[campSelected] = itemSelected.name
+                    user.campStatus[campSelected] = 1
+                    user.produceStopTime[campSelected] =
+                        System.currentTimeMillis() + itemSelected.time
+                    binding.producePage.visibility = View.GONE
+                } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.itemDropdown.onItemSelectedListener = object : OnItemSelectedListener {
@@ -262,6 +274,12 @@ class ProducePageFragment : Fragment() {
                 val itemSelected = itemList[position]
 
                 binding.itemCost.text = itemSelected.cost.toString()
+                if (itemSelected.cost >= user.money) {
+                    binding.itemCost.setTextColor(Color.parseColor("#FF0000"))
+                } else {
+                    binding.itemCost.setTextColor(oldColors)
+                }
+
                 binding.itemTime.text = (itemSelected.time / 1000).toString()
             }
 

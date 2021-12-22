@@ -4,8 +4,9 @@ data class User(
     var name: String = "Shubham",
     var xp: Long = 0L,
     var level: Int = 0,
+    var nextXp:Long = 1250L,
     var money: Long = 0L,
-    var stamina: Long = 100L,
+    var food: Long = 100L,
     var gold: Int = 0,
     var lastOnline: Long = 0L,
     var farmStatus: MutableList<Int> = mutableListOf<Int>(

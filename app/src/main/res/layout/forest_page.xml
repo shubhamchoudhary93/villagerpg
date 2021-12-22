@@ -49,7 +49,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="What can you find : \n Wood\n Metal" />
+                android:text="What can you find : \n Wood\n Iron" />
 
         </LinearLayout>
 

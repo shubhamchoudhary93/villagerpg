@@ -21,11 +21,12 @@ class MarketPageFragment : Fragment() {
     private var user = User()
 
     private fun setScreenData() {
+        user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

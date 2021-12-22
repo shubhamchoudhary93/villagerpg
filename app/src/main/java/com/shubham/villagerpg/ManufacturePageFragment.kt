@@ -2,6 +2,8 @@ package com.shubham.villagerpg
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -31,6 +33,7 @@ class ManufacturePageFragment : Fragment() {
     private var kitchenSelected = 0
     private val busy = "busy"
     private val ready = "ready"
+    private lateinit var oldColors: ColorStateList
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
@@ -54,11 +57,12 @@ class ManufacturePageFragment : Fragment() {
     }
 
     private fun setScreenData() {
+        user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
 
         for (i in 0..7) {
             when {
@@ -107,9 +111,12 @@ class ManufacturePageFragment : Fragment() {
         setListeners()
         setScreenData()
         val title = "Manufacture"
+        binding.cookButton.isEnabled = false
+        binding.manufactureButton.isEnabled = false
         binding.head.title.text = title
         binding.manufacturePage.visibility = View.GONE
         binding.kitchenPage.visibility = View.GONE
+        oldColors = binding.itemCost.textColors
         return binding.root
     }
 
@@ -119,8 +126,9 @@ class ManufacturePageFragment : Fragment() {
                 factorySelected = i
                 when {
                     user.factoryStatus[i] == 0 -> {
+                        binding.kitchenPage.visibility = View.GONE
                         binding.manufacturePage.visibility = View.VISIBLE
-                        productList = inventoryDatabase.getAvailableItem("product")
+                        productList = inventoryDatabase.getAvailableItem("product", user.level)
 
                         val names: MutableList<String> = mutableListOf()
                         var text: String
@@ -163,8 +171,9 @@ class ManufacturePageFragment : Fragment() {
                 kitchenSelected = i
                 when {
                     user.kitchenStatus[i] == 0 -> {
+                        binding.manufacturePage.visibility = View.GONE
                         binding.kitchenPage.visibility = View.VISIBLE
-                        foodList = inventoryDatabase.getAvailableItem("food")
+                        foodList = inventoryDatabase.getAvailableItem("food", user.level)
 
                         val names: MutableList<String> = mutableListOf()
                         var text: String
@@ -218,6 +227,11 @@ class ManufacturePageFragment : Fragment() {
 
                     binding.itemCost.text = itemSelected.cost.toString()
                     binding.itemTime.text = (itemSelected.time / 1000).toString()
+                    if (itemSelected.cost >= user.money) {
+                        binding.itemCost.setTextColor(Color.parseColor("#FF0000"))
+                    } else {
+                        binding.itemCost.setTextColor(oldColors)
+                    }
 
                     val requirementList = finishRequirementDatabase.getByRequirementID(
                         itemSelected.name
@@ -257,6 +271,12 @@ class ManufacturePageFragment : Fragment() {
                     binding.foodCost.text = foodSelected.cost.toString()
                     binding.foodTime.text = (foodSelected.time / 1000).toString()
 
+                    if (foodSelected.cost >= user.money) {
+                        binding.foodCost.setTextColor(Color.parseColor("#FF0000"))
+                    } else {
+                        binding.foodCost.setTextColor(oldColors)
+                    }
+
                     val requirementList = finishRequirementDatabase.getByRequirementID(
                         foodSelected.name
                     )
@@ -282,87 +302,91 @@ class ManufacturePageFragment : Fragment() {
             }
 
         binding.manufactureButton.setOnClickListener {
-            val productSelected = productList[binding.productDropdown.selectedItemPosition]
-            if (productSelected.cost <= user.money) {
-                val requirementList = finishRequirementDatabase.getByRequirementID(
-                    productSelected.name
-                )
+            if (productList.size > 1) {
+                val productSelected = productList[binding.productDropdown.selectedItemPosition]
+                if (productSelected.cost <= user.money) {
+                    val requirementList = finishRequirementDatabase.getByRequirementID(
+                        productSelected.name
+                    )
 
-                val inventoryList = mutableListOf<Inventory>()
+                    val inventoryList = mutableListOf<Inventory>()
 
-                for (i in requirementList.indices) {
-                    inventoryDatabase.getName(requirementList[i].inventory)
-                        ?.let { it1 -> inventoryList.add(it1) }
-                }
-
-                var canManufacture = false
-                for (i in requirementList.indices) {
-                    canManufacture =
-                        requirementList[i].quantity <= inventoryList[i].quantity
-                }
-
-                if (canManufacture) {
-                    user.money -= productSelected.cost
                     for (i in requirementList.indices) {
-                        inventoryList[i].quantity =
-                            inventoryList[i].quantity - requirementList[i].quantity
-                        inventoryDatabase.update(inventoryList[i])
+                        inventoryDatabase.getName(requirementList[i].inventory)
+                            ?.let { it1 -> inventoryList.add(it1) }
                     }
 
-                    binding.root.findViewById<TextView>(factorySelected + 10000).text =
-                        busy
+                    var canManufacture = false
+                    for (i in requirementList.indices) {
+                        canManufacture =
+                            requirementList[i].quantity <= inventoryList[i].quantity
+                    }
 
-                    user.manufactureItem[factorySelected] = productSelected.name
-                    user.factoryStatus[factorySelected] = 1
-                    user.manufactureStopTime[factorySelected] =
-                        System.currentTimeMillis() + productSelected.time
-                    binding.manufacturePage.visibility = View.GONE
-                } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
-                    .show()
+                    if (canManufacture) {
+                        user.money -= productSelected.cost
+                        for (i in requirementList.indices) {
+                            inventoryList[i].quantity =
+                                inventoryList[i].quantity - requirementList[i].quantity
+                            inventoryDatabase.update(inventoryList[i])
+                        }
 
-            } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+                        binding.root.findViewById<TextView>(factorySelected + 10000).text =
+                            busy
+
+                        user.manufactureItem[factorySelected] = productSelected.name
+                        user.factoryStatus[factorySelected] = 1
+                        user.manufactureStopTime[factorySelected] =
+                            System.currentTimeMillis() + productSelected.time
+                        binding.manufacturePage.visibility = View.GONE
+                    } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
+                        .show()
+
+                } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.cookButton.setOnClickListener {
-            val foodSelected = foodList[binding.foodDropdown.selectedItemPosition]
-            if (foodSelected.cost <= user.money) {
-                val requirementList = finishRequirementDatabase.getByRequirementID(
-                    foodSelected.name
-                )
+            if (foodList.size > 1) {
+                val foodSelected = foodList[binding.foodDropdown.selectedItemPosition]
+                if (foodSelected.cost <= user.money) {
+                    val requirementList = finishRequirementDatabase.getByRequirementID(
+                        foodSelected.name
+                    )
 
-                val inventoryList = mutableListOf<Inventory>()
+                    val inventoryList = mutableListOf<Inventory>()
 
-                for (i in requirementList.indices) {
-                    inventoryDatabase.getName(requirementList[i].inventory)
-                        ?.let { it1 -> inventoryList.add(it1) }
-                }
-
-                var canCook = false
-                for (i in requirementList.indices) {
-                    canCook =
-                        requirementList[i].quantity <= inventoryList[i].quantity
-                    println(canCook)
-                }
-
-                if (canCook) {
-                    user.money -= foodSelected.cost
                     for (i in requirementList.indices) {
-                        inventoryList[i].quantity =
-                            inventoryList[i].quantity - requirementList[i].quantity
-                        inventoryDatabase.update(inventoryList[i])
+                        inventoryDatabase.getName(requirementList[i].inventory)
+                            ?.let { it1 -> inventoryList.add(it1) }
                     }
 
-                    binding.root.findViewById<TextView>(kitchenSelected + 20000).text = busy
+                    var canCook = false
+                    for (i in requirementList.indices) {
+                        canCook =
+                            requirementList[i].quantity <= inventoryList[i].quantity
+                        println(canCook)
+                    }
 
-                    user.foodItem[kitchenSelected] = foodSelected.name
-                    user.kitchenStatus[kitchenSelected] = 1
-                    user.cookingStopTime[kitchenSelected] =
-                        System.currentTimeMillis() + foodSelected.time
-                    binding.kitchenPage.visibility = View.GONE
-                } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
-                    .show()
+                    if (canCook) {
+                        user.money -= foodSelected.cost
+                        for (i in requirementList.indices) {
+                            inventoryList[i].quantity =
+                                inventoryList[i].quantity - requirementList[i].quantity
+                            inventoryDatabase.update(inventoryList[i])
+                        }
 
-            } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+                        binding.root.findViewById<TextView>(kitchenSelected + 20000).text = busy
+
+                        user.foodItem[kitchenSelected] = foodSelected.name
+                        user.kitchenStatus[kitchenSelected] = 1
+                        user.cookingStopTime[kitchenSelected] =
+                            System.currentTimeMillis() + foodSelected.time
+                        binding.kitchenPage.visibility = View.GONE
+                    } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
+                        .show()
+
+                } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -22,22 +22,26 @@
             <TextView
                 android:id="@+id/inventory_selected"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Max :" />
+                android:text="Max :"
+                android:layout_marginEnd="10dp" />
 
             <TextView
                 android:id="@+id/max_inventory"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"/>
 
             <EditText
                 android:id="@+id/quantity_sell"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"/>
 
             <Button
                 android:id="@+id/sell_button"
@@ -50,6 +54,7 @@
 
         <ScrollView
             android:id="@+id/inventory_scrollview"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

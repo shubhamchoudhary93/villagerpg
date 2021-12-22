@@ -19,11 +19,12 @@ class ForestPageFragment : Fragment() {
     private var user = User()
 
     private fun setScreenData() {
+        user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
-        binding.head.xp.text = user.xp.toString()
-        binding.head.stamina.text = user.stamina.toString()
+        binding.head.level.text = user.level.toString()
+        binding.head.food.text = user.food.toString()
     }
 
     override fun onCreateView(
@@ -57,36 +58,36 @@ class ForestPageFragment : Fragment() {
 
     private fun setListeners() {
         binding.exploreButton.setOnClickListener {
+            if (user.food > 0) {
+                val itemList = arrayOf(
+                    inventoryDatabase.getName("Wood"),
+                    inventoryDatabase.getName("Iron"),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                )
 
-            val itemList = arrayOf(
-                inventoryDatabase.get(0),
-                inventoryDatabase.get(1),
-                inventoryDatabase.get(20000),
-                inventoryDatabase.get(20001),
-                inventoryDatabase.get(30000),
-                inventoryDatabase.get(30001),
-                inventoryDatabase.get(40000),
-                inventoryDatabase.get(40001),
-                inventoryDatabase.get(40002),
-                inventoryDatabase.get(40003)
-            )
-
-            val itemExplored = itemList[(itemList.indices).random()]
-            val numberOfItem = (0..3).random()
-            binding.findingLayout.visibility = View.VISIBLE
-            if (itemExplored != null) {
-                if (numberOfItem != 0) {
-                    val text = numberOfItem.toString() + itemExplored.name
-                    binding.finding.text = text
-                    itemExplored.quantity += numberOfItem
-                    inventoryDatabase.update(itemExplored)
-                    user.xp += itemExplored.xp
-                } else {
-                    val nothing = "nothing"
-                    binding.finding.text = nothing
+                val itemExplored = itemList[(itemList.indices).random()]
+                val numberOfItem = (0..2).random()
+                user.food--
+                binding.findingLayout.visibility = View.VISIBLE
+                if (itemExplored != null) {
+                    if (numberOfItem != 0) {
+                        val text = numberOfItem.toString() + itemExplored.name
+                        binding.finding.text = text
+                        itemExplored.quantity += numberOfItem
+                        inventoryDatabase.update(itemExplored)
+                        user.xp += itemExplored.xp
+                    } else {
+                        val nothing = "nothing"
+                        binding.finding.text = nothing
+                    }
                 }
-            }
-            setScreenData()
+                setScreenData()
+            } else binding.findingLayout.visibility = View.GONE
         }
 
     }
