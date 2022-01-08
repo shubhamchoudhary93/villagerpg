@@ -10,6 +10,8 @@ data class Quest(
     var id: Int = 0,
     @ColumnInfo(name = "name")
     var name: String = "",
+    @ColumnInfo(name = "detail")
+    var detail: String = "",
     @ColumnInfo(name = "inventory")
     var inventory: String = "",
     @ColumnInfo(name = "quantity")
