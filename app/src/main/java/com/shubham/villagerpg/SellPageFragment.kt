@@ -24,12 +24,24 @@ class SellPageFragment : Fragment() {
     private var max = 0
 
     lateinit var mainHandler: Handler
+    private var first = true
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
             user.money++
             setScreenData()
             mainHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private val updateStamina = object : Runnable {
+        override fun run() {
+            if(!first) {
+                user.food++
+            }
+            first = false
+            binding.head.food.text = user.food.toString()
+            mainHandler.postDelayed(this, 60000)
         }
     }
 
@@ -106,11 +118,17 @@ class SellPageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
+        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         mainHandler.post(updateScreenTask)
+        val currentTime = System.currentTimeMillis()
+        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaNew = user.food + staminaAdd
+        user.food = staminaNew
+        mainHandler.post(updateStamina)
     }
 }

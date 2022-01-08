@@ -35,6 +35,7 @@ class ProducePageFragment : Fragment() {
     private val busy = "busy"
     private val ready = "ready"
     private lateinit var oldColors: ColorStateList
+    private var first = true
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
@@ -57,6 +58,17 @@ class ProducePageFragment : Fragment() {
             val title = "Produce"
             binding.head.title.text = title
             mainHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private val updateStamina = object : Runnable {
+        override fun run() {
+            if(!first) {
+                user.food++
+            }
+            first = false
+            binding.head.food.text = user.food.toString()
+            mainHandler.postDelayed(this, 60000)
         }
     }
 
@@ -231,7 +243,7 @@ class ProducePageFragment : Fragment() {
             }
         }
         binding.plantButton.setOnClickListener {
-            if (seedList.size > 1) {
+            if (seedList.size >= 1) {
                 val cropSelected = seedList[binding.cropDropdown.selectedItemPosition]
 
                 cropSelected.quantity--
@@ -248,7 +260,7 @@ class ProducePageFragment : Fragment() {
         }
 
         binding.produceButton.setOnClickListener {
-            if (itemList.size > 1) {
+            if (itemList.size >= 1) {
                 val itemSelected = itemList[binding.itemDropdown.selectedItemPosition]
 
                 if (itemSelected.cost <= user.money) {
@@ -270,7 +282,7 @@ class ProducePageFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                binding.plantButton.isEnabled = true
+                binding.produceButton.isEnabled = true
                 val itemSelected = itemList[position]
 
                 binding.itemCost.text = itemSelected.cost.toString()
@@ -284,7 +296,7 @@ class ProducePageFragment : Fragment() {
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
-                binding.plantButton.isEnabled = false
+                binding.produceButton.isEnabled = false
             }
         }
     }
@@ -294,12 +306,18 @@ class ProducePageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
+        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         mainHandler.post(updateScreenTask)
+        val currentTime = System.currentTimeMillis()
+        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaNew = user.food + staminaAdd
+        user.food = staminaNew
+        mainHandler.post(updateStamina)
     }
 
 }

@@ -3,9 +3,12 @@ package com.shubham.villagerpg
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.shubham.villagerpg.data.*
@@ -16,7 +19,28 @@ class ForestPageFragment : Fragment() {
     private lateinit var binding: ForestPageBinding
     private lateinit var inventoryDatabase: InventoryDatabaseDao
     private lateinit var data: SharedPreferences
+    lateinit var mainHandler: Handler
     private var user = User()
+    private var first = true
+
+    private val updateScreenTask = object : Runnable {
+        override fun run() {
+            user.money++
+            setScreenData()
+            mainHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private val updateStamina = object : Runnable {
+        override fun run() {
+            if(!first) {
+                    user.food++
+            }
+            first = false
+            binding.head.food.text = user.food.toString()
+            mainHandler.postDelayed(this, 60000)
+        }
+    }
 
     private fun setScreenData() {
         user = UserFunctions.calculateLevel(user)
@@ -46,6 +70,7 @@ class ForestPageFragment : Fragment() {
                 DatabaseCreate.createFirst(requireContext())
             }
         }
+        mainHandler = Handler(Looper.getMainLooper())
 
         inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
         binding.findingLayout.visibility = View.GONE
@@ -58,7 +83,7 @@ class ForestPageFragment : Fragment() {
 
     private fun setListeners() {
         binding.exploreButton.setOnClickListener {
-            if (user.food > 0) {
+            if (user.food >= 1) {
                 val itemList = arrayOf(
                     inventoryDatabase.getName("Wood"),
                     inventoryDatabase.getName("Iron"),
@@ -85,9 +110,15 @@ class ForestPageFragment : Fragment() {
                         val nothing = "nothing"
                         binding.finding.text = nothing
                     }
+                } else {
+                    val nothing = "nothing"
+                    binding.finding.text = nothing
                 }
                 setScreenData()
-            } else binding.findingLayout.visibility = View.GONE
+            } else {
+                Toast.makeText(context, "No more food", Toast.LENGTH_SHORT).show()
+                binding.findingLayout.visibility = View.GONE
+            }
         }
 
     }
@@ -96,11 +127,19 @@ class ForestPageFragment : Fragment() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
+        mainHandler.removeCallbacks(updateStamina)
+        mainHandler.removeCallbacks(updateScreenTask)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
+        val currentTime = System.currentTimeMillis()
+        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaNew = user.food + staminaAdd
+        user.food = staminaNew
+        mainHandler.post(updateScreenTask)
+        mainHandler.post(updateStamina)
     }
 
 }

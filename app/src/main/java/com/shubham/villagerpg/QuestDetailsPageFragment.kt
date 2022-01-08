@@ -24,12 +24,24 @@ class QuestDetailsPageFragment : Fragment() {
     private lateinit var data: SharedPreferences
     var user = User()
     lateinit var mainHandler: Handler
+    private var first = true
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
             user.money++
             setScreenData()
             mainHandler.postDelayed(this, 1000)
+        }
+    }
+
+    private val updateStamina = object : Runnable {
+        override fun run() {
+            if(!first) {
+                user.food++
+            }
+            first = false
+            binding.head.food.text = user.food.toString()
+            mainHandler.postDelayed(this, 60000)
         }
     }
 
@@ -72,6 +84,7 @@ class QuestDetailsPageFragment : Fragment() {
         val id = QuestDetailsPageFragmentArgs.fromBundle(requireArguments()).id
         val quest = questDatabase.get(id)
         binding.name.text = quest?.name
+        binding.detail.text = quest?.detail
 
         val requirementList = quest?.name?.let {
             questDatabase.getByName(
@@ -172,12 +185,18 @@ class QuestDetailsPageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
+        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         mainHandler.post(updateScreenTask)
+        val currentTime = System.currentTimeMillis()
+        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaNew = user.food + staminaAdd
+        user.food = staminaNew
+        mainHandler.post(updateStamina)
     }
 
 }

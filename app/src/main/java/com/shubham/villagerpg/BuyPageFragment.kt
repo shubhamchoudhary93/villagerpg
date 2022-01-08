@@ -24,16 +24,29 @@ class BuyPageFragment : Fragment() {
     private var user = User()
     private var inventorySelected: Inventory = Inventory()
     private var max = 0
+    private var first = true
+
 
     lateinit var mainHandler: Handler
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
+            user.money++
             setScreenData()
             mainHandler.postDelayed(this, 1000)
         }
     }
 
+    private val updateStamina = object : Runnable {
+        override fun run() {
+            if(!first) {
+                user.food++
+            }
+            first = false
+            binding.head.food.text = user.food.toString()
+            mainHandler.postDelayed(this, 60000)
+        }
+    }
     private fun setScreenData() {
         user = calculateLevel(user)
         binding.head.name.text = user.name
@@ -109,11 +122,17 @@ class BuyPageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
+        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
+        val currentTime = System.currentTimeMillis()
+        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaNew = user.food + staminaAdd
+        user.food = staminaNew
         mainHandler.post(updateScreenTask)
+        mainHandler.post(updateStamina)
     }
 }

@@ -3690,10 +3690,10 @@ object DatabaseCreate {
         finishRequirementDatabase.insert(FinishRequirement(0, "Fancy Guitar", "Oak", 5))
         finishRequirementDatabase.insert(FinishRequirement(0, "Fancy Guitar", "Steel Wire", 6))
 
-        questDatabase.insert(Quest(0, "Quest 1", "Wood", "Quest 1",5, "", 0, 0))
-        questDatabase.insert(Quest(0, "Quest 1", "Iron", "Quest 1",5, "", 0, 0))
-        questDatabase.insert(Quest(0, "Quest 2", "Wood", "Quest 2",10, "", 0, 0))
-        questDatabase.insert(Quest(0, "Quest 2", "Iron", "Quest 2",10, "", 0, 0))
+        questDatabase.insert(Quest(0, "Quest 1", "Quest 1","Wood", 5, "", 0, 0))
+        questDatabase.insert(Quest(0, "Quest 1", "Quest 1","Iron", 5, "", 0, 0))
+        questDatabase.insert(Quest(0, "Quest 2", "Quest 2","Wood", 10, "", 0, 0))
+        questDatabase.insert(Quest(0, "Quest 2", "Quest 2","Iron", 10, "", 0, 0))
 
         questRewardDatabase.insert(QuestReward(0,"Quest 1","Money", 100 ))
         questRewardDatabase.insert(QuestReward(0,"Quest 1","Wood", 10 ))
