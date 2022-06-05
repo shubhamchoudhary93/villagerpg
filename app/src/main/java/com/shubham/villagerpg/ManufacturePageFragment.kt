@@ -99,7 +99,9 @@ class ManufacturePageFragment : Fragment() {
         } else {
             user.also {
                 user.lastOnline = System.currentTimeMillis()
+                user.lastOnlineStamina = System.currentTimeMillis()
                 UserFunctions.saveUser(user, data)
+                DatabaseCreate.createFirst(requireContext())
             }
         }
 
