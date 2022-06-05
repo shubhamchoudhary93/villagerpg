@@ -39,5 +39,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/quest_button"
             android:text="quest"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/stats_button"
+            android:text="stats"/>
     </LinearLayout>
 </layout>

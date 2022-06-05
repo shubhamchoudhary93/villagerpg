@@ -35,7 +35,6 @@ object IDAssign {
         10006.also { binding.factorySeven.id = it }
         10007.also { binding.factoryEight.id = it }
 
-
         20000.also { binding.kitchenOne.id = it }
         20001.also { binding.kitchenTwo.id = it }
         20002.also { binding.kitchenThree.id = it }

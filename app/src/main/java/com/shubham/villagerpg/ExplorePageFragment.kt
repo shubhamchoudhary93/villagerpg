@@ -26,14 +26,6 @@ class ExplorePageFragment : Fragment() {
     private var foodList: MutableList<Inventory> = mutableListOf()
     private var first = true
 
-    private val updateScreenTask = object : Runnable {
-        override fun run() {
-            user.money++
-            setScreenData()
-            mainHandler.postDelayed(this, 1000)
-        }
-    }
-
     private val updateStamina = object : Runnable {
         override fun run() {
             if(!first) {
@@ -136,20 +128,19 @@ class ExplorePageFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
+        user.lastOnlineStamina = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateStamina)
-        mainHandler.removeCallbacks(updateScreenTask)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         val currentTime = System.currentTimeMillis()
-        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
+        val staminaAdd: Int = ((currentTime - user.lastOnlineStamina) / 60000).toInt()
         val staminaNew = user.food + staminaAdd
         user.food = staminaNew
         mainHandler.post(updateStamina)
-        mainHandler.post(updateScreenTask)
     }
 
 }

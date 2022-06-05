@@ -34,38 +34,26 @@ class ManufacturePageFragment : Fragment() {
     private val busy = "busy"
     private val ready = "ready"
     private lateinit var oldColors: ColorStateList
-    private var first = true
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
             user.money++
             for (i in 0..7) {
-                if (user.factoryStatus[i] == 1) {
-                    if (System.currentTimeMillis() >= user.manufactureStopTime[i]) {
-                        user.factoryStatus[i] = 2
+                if (user.factory[i].status == 1) {
+                    if (System.currentTimeMillis() >= user.factory[i].stopTime) {
+                        user.factory[i].status = 2
                     }
                 }
 
-                if (user.kitchenStatus[i] == 1) {
-                    if (System.currentTimeMillis() >= user.cookingStopTime[i]) {
-                        user.kitchenStatus[i] = 2
+                if (user.kitchen[i].status == 1) {
+                    if (System.currentTimeMillis() >= user.kitchen[i].stopTime) {
+                        user.kitchen[i].status = 2
                     }
                 }
             }
 
             setScreenData()
             mainHandler.postDelayed(this, 1000)
-        }
-    }
-
-    private val updateStamina = object : Runnable {
-        override fun run() {
-            if(!first) {
-                user.food++
-            }
-            first = false
-            binding.head.food.text = user.food.toString()
-            mainHandler.postDelayed(this, 60000)
         }
     }
 
@@ -78,18 +66,18 @@ class ManufacturePageFragment : Fragment() {
         binding.head.food.text = user.food.toString()
 
         for (i in 0..7) {
-            when {
-                user.factoryStatus[i] == 0 -> binding.root.findViewById<TextView>(i + 10000).text =
+            when (user.factory[i].status) {
+                0 -> binding.root.findViewById<TextView>(i + 10000).text =
                     ""
-                user.factoryStatus[i] == 1 -> binding.root.findViewById<TextView>(i + 10000).text =
+                1 -> binding.root.findViewById<TextView>(i + 10000).text =
                     busy
                 else -> binding.root.findViewById<TextView>(i + 10000).text = ready
             }
 
-            when {
-                user.kitchenStatus[i] == 0 -> binding.root.findViewById<TextView>(i + 20000).text =
+            when (user.kitchen[i].status) {
+                0 -> binding.root.findViewById<TextView>(i + 20000).text =
                     ""
-                user.kitchenStatus[i] == 1 -> binding.root.findViewById<TextView>(i + 20000).text =
+                1 -> binding.root.findViewById<TextView>(i + 20000).text =
                     busy
                 else -> binding.root.findViewById<TextView>(i + 20000).text = ready
             }
@@ -137,8 +125,8 @@ class ManufacturePageFragment : Fragment() {
         for (i in 0..7) {
             binding.root.findViewById<TextView>(i + 10000).setOnClickListener {
                 factorySelected = i
-                when {
-                    user.factoryStatus[i] == 0 -> {
+                when (user.factory[i].status) {
+                    0 -> {
                         binding.kitchenPage.visibility = View.GONE
                         binding.manufacturePage.visibility = View.VISIBLE
                         productList = inventoryDatabase.getAvailableItem("product", user.level)
@@ -158,23 +146,25 @@ class ManufacturePageFragment : Fragment() {
                             )
                         binding.productDropdown.adapter = adapter
                     }
-                    user.factoryStatus[i] == 1 -> {
+                    1 -> {
                         Toast.makeText(
                             context,
-                            "not ready - ${(user.manufactureStopTime[i] - System.currentTimeMillis()) / 1000} seconds left",
+                            "not ready - ${(user.factory[i].stopTime - System.currentTimeMillis()) / 1000} seconds left",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                     else -> {
-                        user.factoryStatus[i] = 0
+                        user.factory[i].status = 0
 
                         val productSelected =
-                            inventoryDatabase.getName(user.manufactureItem[i])
+                            inventoryDatabase.getName(user.factory[i].item)
                         if (productSelected != null) {
                             productSelected.quantity++
                             user.xp += productSelected.xp
                             inventoryDatabase.update(productSelected)
                         }
+                        user.factory[i].item = ""
+                        user.factory[i].stopTime = 0L
                         binding.manufacturePage.visibility = View.GONE
                     }
                 }
@@ -182,8 +172,8 @@ class ManufacturePageFragment : Fragment() {
 
             binding.root.findViewById<TextView>(i + 20000).setOnClickListener {
                 kitchenSelected = i
-                when {
-                    user.kitchenStatus[i] == 0 -> {
+                when (user.kitchen[i].status) {
+                    0 -> {
                         binding.manufacturePage.visibility = View.GONE
                         binding.kitchenPage.visibility = View.VISIBLE
                         foodList = inventoryDatabase.getAvailableItem("food", user.level)
@@ -203,24 +193,26 @@ class ManufacturePageFragment : Fragment() {
                             )
                         binding.foodDropdown.adapter = adapter
                     }
-                    user.kitchenStatus[i] == 1 -> {
+                    1 -> {
                         Toast.makeText(
                             context,
-                            "not ready - ${(user.cookingStopTime[i] - System.currentTimeMillis()) / 1000} seconds left",
+                            "not ready - ${(user.kitchen[i].stopTime - System.currentTimeMillis()) / 1000} seconds left",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                     else -> {
-                        user.kitchenStatus[i] = 0
+                        user.kitchen[i].status = 0
 
                         val foodSelected =
-                            inventoryDatabase.getName(user.foodItem[i])
+                            inventoryDatabase.getName(user.kitchen[i].item)
                         println(foodSelected?.name)
                         if (foodSelected != null) {
                             foodSelected.quantity++
                             user.xp += foodSelected.xp
                             inventoryDatabase.update(foodSelected)
                         }
+                        user.kitchen[i].item = ""
+                        user.kitchen[i].stopTime = 0L
                         binding.kitchenPage.visibility = View.GONE
                     }
                 }
@@ -346,9 +338,9 @@ class ManufacturePageFragment : Fragment() {
                         binding.root.findViewById<TextView>(factorySelected + 10000).text =
                             busy
 
-                        user.manufactureItem[factorySelected] = productSelected.name
-                        user.factoryStatus[factorySelected] = 1
-                        user.manufactureStopTime[factorySelected] =
+                        user.factory[factorySelected].item = productSelected.name
+                        user.factory[factorySelected].status = 1
+                        user.factory[factorySelected].stopTime =
                             System.currentTimeMillis() + productSelected.time
                         binding.manufacturePage.visibility = View.GONE
                     } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
@@ -390,9 +382,9 @@ class ManufacturePageFragment : Fragment() {
 
                         binding.root.findViewById<TextView>(kitchenSelected + 20000).text = busy
 
-                        user.foodItem[kitchenSelected] = foodSelected.name
-                        user.kitchenStatus[kitchenSelected] = 1
-                        user.cookingStopTime[kitchenSelected] =
+                        user.kitchen[kitchenSelected].item = foodSelected.name
+                        user.kitchen[kitchenSelected].status = 1
+                        user.kitchen[kitchenSelected].stopTime =
                             System.currentTimeMillis() + foodSelected.time
                         binding.kitchenPage.visibility = View.GONE
                     } else Toast.makeText(context, "Requirements not met", Toast.LENGTH_SHORT)
@@ -408,17 +400,11 @@ class ManufacturePageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
-        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         mainHandler.post(updateScreenTask)
-        val currentTime = System.currentTimeMillis()
-        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
-        val staminaNew = user.food + staminaAdd
-        user.food = staminaNew
-        mainHandler.post(updateStamina)
     }
 }

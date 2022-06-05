@@ -17,7 +17,7 @@ object DatabaseCreate {
         questDatabase = QuestDatabase.getInstance(context).questDatabaseDao
         questRewardDatabase = QuestRewardDatabase.getInstance(context).questRewardDatabaseDao
 
-        inventoryDatabase.insert(Inventory(0,"Pepper Seed","seed",9,0,0,0,60000,1,10,"Pepper",1,0,0))
+        inventoryDatabase.insert(Inventory(0,"Pepper Seed","seed",9,0,0,0,60000,0,10,"Pepper",1,0,0))
         inventoryDatabase.insert(Inventory(1,"Carrot Seed","seed",18,0,0,0,120000,2,10,"Carrot",1,0,0))
         inventoryDatabase.insert(Inventory(2,"Pea Seed","seed",29,0,0,0,180000,4,0,"Pea",1,0,0))
         inventoryDatabase.insert(Inventory(3,"Cucumber Seed","seed",38,0,0,0,240000,6,0,"Cucumber",1,0,0))

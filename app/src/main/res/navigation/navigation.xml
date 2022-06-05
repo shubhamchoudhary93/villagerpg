@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_startPageFragment_to_questPageFragment"
             app:destination="@id/questPageFragment" />
+        <action
+            android:id="@+id/action_startPageFragment_to_statsPageFragment"
+            app:destination="@id/statsPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/producePageFragment"
@@ -102,4 +105,9 @@
             android:id="@+id/action_questDetailsPageFragment_to_questPageFragment"
             app:destination="@id/questPageFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/statsPageFragment"
+        android:name="com.shubham.villagerpg.StatsPageFragment"
+        android:label="StatsPageFragment"
+        tools:layout="@layout/stats_page"/>
 </navigation>

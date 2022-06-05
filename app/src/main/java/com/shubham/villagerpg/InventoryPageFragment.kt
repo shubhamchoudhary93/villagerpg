@@ -19,28 +19,7 @@ class InventoryPageFragment : Fragment() {
     private lateinit var binding: InventoryPageBinding
     private lateinit var inventoryDatabase: InventoryDatabaseDao
     private lateinit var data: SharedPreferences
-    lateinit var mainHandler: Handler
     private var user = User()
-    private var first = true
-
-    private val updateScreenTask = object : Runnable {
-        override fun run() {
-            user.money++
-            setScreenData()
-            mainHandler.postDelayed(this, 1000)
-        }
-    }
-
-    private val updateStamina = object : Runnable {
-        override fun run() {
-            if(!first) {
-                user.food++
-            }
-            first = false
-            binding.head.food.text = user.food.toString()
-            mainHandler.postDelayed(this, 60000)
-        }
-    }
 
     private fun setScreenData() {
         user = UserFunctions.calculateLevel(user)
@@ -72,7 +51,7 @@ class InventoryPageFragment : Fragment() {
         }
 
         inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
-        mainHandler = Handler(Looper.getMainLooper())
+        setScreenData()
 
         val list = inventoryDatabase.getAvailable()
 
@@ -92,19 +71,11 @@ class InventoryPageFragment : Fragment() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
-        mainHandler.removeCallbacks(updateStamina)
-        mainHandler.removeCallbacks(updateScreenTask)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
-        val currentTime = System.currentTimeMillis()
-        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
-        val staminaNew = user.food + staminaAdd
-        user.food = staminaNew
-        mainHandler.post(updateStamina)
-        mainHandler.post(updateScreenTask)
     }
 
 }

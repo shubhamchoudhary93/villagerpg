@@ -35,22 +35,21 @@ class ProducePageFragment : Fragment() {
     private val busy = "busy"
     private val ready = "ready"
     private lateinit var oldColors: ColorStateList
-    private var first = true
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
             user.money++
             for (i in 10000..10007) {
-                if (user.farmStatus[i - 10000] == 1) {
-                    if (System.currentTimeMillis() >= user.plantStopTime[i - 10000]) {
-                        user.farmStatus[i - 10000] = 2
+                if (user.farm[i - 10000].status == 1) {
+                    if (System.currentTimeMillis() >= user.farm[i - 10000].stopTime) {
+                        user.farm[i - 10000].status = 2
                     }
                 }
             }
             for (i in 30000..30007) {
-                if (user.campStatus[i - 30000] == 1) {
-                    if (System.currentTimeMillis() >= user.produceStopTime[i - 30000]) {
-                        user.campStatus[i - 30000] = 2
+                if (user.camp[i - 30000].status == 1) {
+                    if (System.currentTimeMillis() >= user.camp[i - 30000].stopTime) {
+                        user.camp[i - 30000].status = 2
                     }
                 }
             }
@@ -61,18 +60,8 @@ class ProducePageFragment : Fragment() {
         }
     }
 
-    private val updateStamina = object : Runnable {
-        override fun run() {
-            if(!first) {
-                user.food++
-            }
-            first = false
-            binding.head.food.text = user.food.toString()
-            mainHandler.postDelayed(this, 60000)
-        }
-    }
-
     private fun setScreenData() {
+
         user = UserFunctions.calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
@@ -81,18 +70,18 @@ class ProducePageFragment : Fragment() {
         binding.head.food.text = user.food.toString()
 
         for (i in 10000..10007) {
-            when {
-                user.farmStatus[i - 10000] == 0 -> binding.root.findViewById<TextView>(i).text = ""
-                user.farmStatus[i - 10000] == 1 -> binding.root.findViewById<TextView>(i).text =
+            when (user.farm[i - 10000].status) {
+                0 -> binding.root.findViewById<TextView>(i).text = ""
+                1 -> binding.root.findViewById<TextView>(i).text =
                     busy
                 else -> binding.root.findViewById<TextView>(i).text = ready
             }
         }
 
         for (i in 30000..30007) {
-            when {
-                user.campStatus[i - 30000] == 0 -> binding.root.findViewById<TextView>(i).text = ""
-                user.campStatus[i - 30000] == 1 -> binding.root.findViewById<TextView>(i).text =
+            when (user.camp[i - 30000].status) {
+                0 -> binding.root.findViewById<TextView>(i).text = ""
+                1 -> binding.root.findViewById<TextView>(i).text =
                     busy
                 else -> binding.root.findViewById<TextView>(i).text = ready
             }
@@ -136,8 +125,8 @@ class ProducePageFragment : Fragment() {
         for (i in 10000..10007)
             binding.root.findViewById<TextView>(i).setOnClickListener {
                 farmSelected = i - 10000
-                when {
-                    user.farmStatus[i - 10000] == 0 -> {
+                when (user.farm[i - 10000].status) {
+                    0 -> {
                         binding.farmPage.visibility = View.VISIBLE
                         binding.producePage.visibility = View.GONE
                         seedList = inventoryDatabase.getAvailableByType("seed")
@@ -157,17 +146,17 @@ class ProducePageFragment : Fragment() {
                             )
                         binding.cropDropdown.adapter = adapter
                     }
-                    user.farmStatus[i - 10000] == 1 -> {
+                    1 -> {
                         Toast.makeText(
                             context,
-                            "not ready - ${(user.plantStopTime[i - 10000] - System.currentTimeMillis()) / 1000} seconds left",
+                            "not ready - ${(user.farm[i - 10000].stopTime - System.currentTimeMillis()) / 1000} seconds left",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                     else -> {
-                        user.farmStatus[i - 10000] = 0
+                        user.farm[i - 10000].status = 0
                         val cropSelectedName =
-                            inventoryDatabase.getCorresponding(user.farmCrop[i - 10000])
+                            inventoryDatabase.getCorresponding(user.farm[i - 10000].item)
                         val cropSelected = inventoryDatabase.getName(cropSelectedName)
                         println(cropSelected?.name)
                         if (cropSelected != null) {
@@ -175,6 +164,8 @@ class ProducePageFragment : Fragment() {
                             user.xp += cropSelected.xp
                             inventoryDatabase.update(cropSelected)
                         }
+                        user.farm[i - 10000].item = ""
+                        user.farm[i - 10000].stopTime = 0L
                         binding.farmPage.visibility = View.GONE
                     }
                 }
@@ -183,8 +174,8 @@ class ProducePageFragment : Fragment() {
         for (i in 30000..30007)
             binding.root.findViewById<TextView>(i).setOnClickListener {
                 campSelected = i - 30000
-                when {
-                    user.campStatus[i - 30000] == 0 -> {
+                when (user.camp[i - 30000].status) {
+                    0 -> {
                         binding.producePage.visibility = View.VISIBLE
                         binding.farmPage.visibility = View.GONE
                         itemList = inventoryDatabase.getAvailableItem("raw", user.level)
@@ -204,22 +195,24 @@ class ProducePageFragment : Fragment() {
                             )
                         binding.itemDropdown.adapter = adapter
                     }
-                    user.campStatus[i - 30000] == 1 -> {
+                    1 -> {
                         Toast.makeText(
                             context,
-                            "not ready - ${(user.produceStopTime[i - 30000] - System.currentTimeMillis()) / 1000} seconds left",
+                            "not ready - ${(user.camp[i - 30000].stopTime - System.currentTimeMillis()) / 1000} seconds left",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                     else -> {
-                        user.campStatus[i - 30000] = 0
+                        user.camp[i - 30000].status = 0
                         val itemSelected =
-                            inventoryDatabase.getName(user.produceItem[i - 30000])
+                            inventoryDatabase.getName(user.camp[i - 30000].item)
                         if (itemSelected != null) {
                             itemSelected.quantity++
                             user.xp += itemSelected.xp
                             inventoryDatabase.update(itemSelected)
                         }
+                        user.camp[i - 30000].item = ""
+                        user.camp[i - 30000].stopTime = 0L
                         binding.producePage.visibility = View.GONE
                     }
                 }
@@ -251,9 +244,9 @@ class ProducePageFragment : Fragment() {
 
                 binding.root.findViewById<TextView>(farmSelected + 10000).text = busy
 
-                user.farmCrop[farmSelected] = cropSelected.name
-                user.farmStatus[farmSelected] = 1
-                user.plantStopTime[farmSelected] = System.currentTimeMillis() + cropSelected.time
+                user.farm[farmSelected].item = cropSelected.name
+                user.farm[farmSelected].status = 1
+                user.farm[farmSelected].stopTime = System.currentTimeMillis() + cropSelected.time
                 binding.farmPage.visibility = View.GONE
             }
 
@@ -266,9 +259,9 @@ class ProducePageFragment : Fragment() {
                 if (itemSelected.cost <= user.money) {
                     binding.root.findViewById<TextView>(campSelected + 30000).text = busy
                     user.money -= itemSelected.cost
-                    user.produceItem[campSelected] = itemSelected.name
-                    user.campStatus[campSelected] = 1
-                    user.produceStopTime[campSelected] =
+                    user.camp[campSelected].item = itemSelected.name
+                    user.camp[campSelected].status = 1
+                    user.camp[campSelected].stopTime =
                         System.currentTimeMillis() + itemSelected.time
                     binding.producePage.visibility = View.GONE
                 } else Toast.makeText(context, "Not enough money", Toast.LENGTH_SHORT).show()
@@ -306,18 +299,12 @@ class ProducePageFragment : Fragment() {
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateScreenTask)
-        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
         mainHandler.post(updateScreenTask)
-        val currentTime = System.currentTimeMillis()
-        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
-        val staminaNew = user.food + staminaAdd
-        user.food = staminaNew
-        mainHandler.post(updateStamina)
     }
 
 }

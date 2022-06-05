@@ -10,16 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import com.shubham.villagerpg.data.*
-import com.shubham.villagerpg.databinding.QuestPageBinding
+import com.shubham.villagerpg.databinding.StatsPageBinding
 
-class QuestPageFragment : Fragment() {
+class StatsPageFragment : Fragment() {
 
-    private lateinit var binding: QuestPageBinding
-    private lateinit var questDatabase: QuestDatabaseDao
+    private lateinit var binding: StatsPageBinding
+    private lateinit var inventoryDatabase: InventoryDatabaseDao
     private lateinit var data: SharedPreferences
-    var user = User()
+    private var user = User()
 
     private fun setScreenData() {
         user = UserFunctions.calculateLevel(user)
@@ -28,6 +27,23 @@ class QuestPageFragment : Fragment() {
         binding.head.gold.text = user.gold.toString()
         binding.head.level.text = user.level.toString()
         binding.head.food.text = user.food.toString()
+
+        var text = "User Data\n"
+
+        text = text + "\nname : " + user.name
+        text = text + "\nxp : " + user.xp
+        text = text + "\nlevel : " + user.level
+        text = text + "\nnextXp : " + user.nextXp
+        text = text + "\nmoney : " + user.money
+        text = text + "\nfood : " + user.food
+        text = text + "\ngold : " + user.gold
+        text = text + "\nlastOnline : " + user.lastOnline
+        text = text + "\nfarmStatus : " + user.farm
+        text = text + "\ncampStatus : " + user.camp
+        text = text + "\nfactoryStatus : " + user.factory
+        text = text + "\nkitchenStatus : " + user.kitchen
+
+        binding.userData.text = text
     }
 
     override fun onCreateView(
@@ -36,10 +52,8 @@ class QuestPageFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.quest_page, container, false
+            R.layout.stats_page, container, false
         )
-
-        questDatabase = QuestDatabase.getInstance(requireContext()).questDatabaseDao
 
         data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
         user = if (data.contains("User")) {
@@ -52,22 +66,12 @@ class QuestPageFragment : Fragment() {
             }
         }
 
+        inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
+        val list = inventoryDatabase.getAvailable()
+
+        binding.inventoryData.text = list.toString()
         setScreenData()
-
-        val list = questDatabase.getAvailable()
-
-        val adapter = QuestPageAdaptor(QuestPageAdaptor.QuestListener {
-
-            val actionDetail =
-                QuestPageFragmentDirections.actionQuestPageFragmentToQuestDetailsPageFragment()
-            actionDetail.id = it
-            view?.findNavController()?.navigate(actionDetail)
-        })
-
-        binding.list.adapter = adapter
-
-        adapter.submitList(list)
-        val title = "Quest"
+        val title = "Stats"
         binding.head.title.text = title
         return binding.root
     }

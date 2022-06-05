@@ -123,9 +123,9 @@ object UserFunctions {
         )
         if (user.level < 99) {
             if (user.xp >= user.nextXp) {
-                for(i in 0..levelXp.size){
-                    if(user.xp >= levelXp[i]){
-                        user.nextXp = levelXp[i+1]
+                for (i in 0..levelXp.size) {
+                    if (user.xp >= levelXp[i]) {
+                        user.nextXp = levelXp[i + 1]
                         user.level = i
                     } else break
                 }

@@ -3,8 +3,6 @@ package com.shubham.villagerpg
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,27 +19,6 @@ class StartPageFragment : Fragment() {
     private lateinit var binding: StartPageBinding
     private lateinit var data: SharedPreferences
     var user = User()
-    lateinit var mainHandler: Handler
-    private var first = true
-
-    private val updateScreenTask = object : Runnable {
-        override fun run() {
-            user.money++
-            setScreenData()
-            mainHandler.postDelayed(this, 1000)
-        }
-    }
-
-    private val updateStamina = object : Runnable {
-        override fun run() {
-            if(!first) {
-                user.food++
-            }
-            first = false
-            binding.head.food.text = user.food.toString()
-            mainHandler.postDelayed(this, 60000)
-        }
-    }
 
     private fun setScreenData() {
         user = UserFunctions.calculateLevel(user)
@@ -61,6 +38,16 @@ class StartPageFragment : Fragment() {
             R.layout.start_page, container, false
         )
 
+        setDATA()
+
+        setScreenData()
+        setListeners()
+        val title = "VillageRPG"
+        binding.head.title.text = title
+        return binding.root
+    }
+
+    private fun setDATA() {
         data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
         user = if (data.contains("User")) {
             UserFunctions.fetchUser(data)
@@ -71,12 +58,6 @@ class StartPageFragment : Fragment() {
                 DatabaseCreate.createFirst(requireContext())
             }
         }
-
-        mainHandler = Handler(Looper.getMainLooper())
-        setListeners()
-        val title = "VillageRPG"
-        binding.head.title.text = title
-        return binding.root
     }
 
     private fun setListeners() {
@@ -104,24 +85,20 @@ class StartPageFragment : Fragment() {
             view?.findNavController()
                 ?.navigate(R.id.action_startPageFragment_to_questPageFragment)
         }
+        binding.statsButton.setOnClickListener {
+            view?.findNavController()
+                ?.navigate(R.id.action_startPageFragment_to_statsPageFragment)
+        }
     }
 
     override fun onPause() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
-        mainHandler.removeCallbacks(updateScreenTask)
-        mainHandler.removeCallbacks(updateStamina)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
-        mainHandler.post(updateScreenTask)
-        val currentTime = System.currentTimeMillis()
-        val staminaAdd: Int = ((currentTime - user.lastOnline) / 60000).toInt()
-        val staminaNew = user.food + staminaAdd
-        user.food = staminaNew
-        mainHandler.post(updateStamina)
     }
 }
