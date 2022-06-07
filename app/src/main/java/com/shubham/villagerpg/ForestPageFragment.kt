@@ -41,6 +41,8 @@ class ForestPageFragment : Fragment() {
         binding.head.gold.text = user.gold.toString()
         binding.head.level.text = user.level.toString()
         binding.head.food.text = user.food.toString()
+        val xpText = user.xp.toString() + "/" + user.nextXp.toString()
+        binding.head.xp.text = xpText
     }
 
     override fun onCreateView(

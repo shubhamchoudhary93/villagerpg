@@ -9,7 +9,7 @@
 
         <include
             android:id="@+id/head"
-            layout="@layout/head"/>
+            layout="@layout/head" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -148,6 +148,7 @@
                     android:id="@+id/manufacture_page"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -156,124 +157,154 @@
                         android:text="Manufacture a product"
                         android:textSize="16dp" />
 
-                    <Spinner
-                        android:id="@+id/product_dropdown"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:id="@+id/manufacture_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Manufacture" />
-
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cost : " />
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/item_cost"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            <Spinner
+                                android:id="@+id/product_dropdown"
+                                android:layout_width="200dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Cost : " />
+
+                                <TextView
+                                    android:id="@+id/item_cost"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" Time : " />
+
+                                <TextView
+                                    android:id="@+id/item_time"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" sec" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Requirements : " />
+
+                            <TextView
+                                android:id="@+id/requirements_manufacture"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <Button
+                            android:id="@+id/manufacture_button"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text=" Time : " />
-
-                        <TextView
-                            android:id="@+id/item_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" sec" />
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="Manufacture" />
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Requirements : " />
-
-                    <TextView
-                        android:id="@+id/requirements_manufacture"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/kitchen_page"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cook food"
-                        android:textSize="16dp" />
-
-                    <Spinner
-                        android:id="@+id/food_dropdown"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:id="@+id/cook_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="cook" />
-
 
                     <LinearLayout
+                        android:id="@+id/kitchen_page"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="20dp"
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cost : " />
+                            android:text="Cook food"
+                            android:textSize="16dp" />
 
-                        <TextView
-                            android:id="@+id/food_cost"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text=" Time : " />
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/food_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" sec" />
+                                <Spinner
+                                    android:id="@+id/food_dropdown"
+                                    android:layout_width="200dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Cost : " />
+
+                                    <TextView
+                                        android:id="@+id/food_cost"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text=" Time : " />
+
+                                    <TextView
+                                        android:id="@+id/food_time"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text=" sec" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Requirements : " />
+
+                                <TextView
+                                    android:id="@+id/requirements_cooking"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/cook_button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="cook" />
+                        </LinearLayout>
+
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Requirements : " />
-
-                    <TextView
-                        android:id="@+id/requirements_cooking"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

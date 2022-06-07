@@ -91,6 +91,8 @@ class ExplorePageFragment : Fragment() {
         binding.head.gold.text = user.gold.toString()
         binding.head.level.text = user.level.toString()
         binding.head.food.text = user.food.toString()
+        val xpText = user.xp.toString() + "/" + user.nextXp.toString()
+        binding.head.xp.text = xpText
     }
 
     private fun setListeners() {
@@ -132,6 +134,7 @@ class ExplorePageFragment : Fragment() {
         user.lastOnlineStamina = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
         mainHandler.removeCallbacks(updateStamina)
+        first = true
     }
 
     override fun onResume() {
@@ -142,6 +145,7 @@ class ExplorePageFragment : Fragment() {
         val staminaNew = user.food + staminaAdd
         user.food = staminaNew
         mainHandler.post(updateStamina)
+        first = true
     }
 
 }

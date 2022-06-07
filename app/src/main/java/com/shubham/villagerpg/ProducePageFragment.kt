@@ -38,7 +38,6 @@ class ProducePageFragment : Fragment() {
 
     private val updateScreenTask = object : Runnable {
         override fun run() {
-            user.money++
             for (i in 10000..10007) {
                 if (user.farm[i - 10000].status == 1) {
                     if (System.currentTimeMillis() >= user.farm[i - 10000].stopTime) {
@@ -68,6 +67,8 @@ class ProducePageFragment : Fragment() {
         binding.head.gold.text = user.gold.toString()
         binding.head.level.text = user.level.toString()
         binding.head.food.text = user.food.toString()
+        val xpText = user.xp.toString() + "/" + user.nextXp.toString()
+        binding.head.xp.text = xpText
 
         for (i in 10000..10007) {
             when (user.farm[i - 10000].status) {
