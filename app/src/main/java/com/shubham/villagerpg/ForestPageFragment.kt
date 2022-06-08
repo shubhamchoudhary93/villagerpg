@@ -81,7 +81,7 @@ class ForestPageFragment : Fragment() {
             if (user.food >= 1) {
                 val itemList = arrayOf(
                     inventoryDatabase.getName("Wood"),
-                    inventoryDatabase.getName("Iron"),
+                    inventoryDatabase.getName("Stone"),
                     null,
                     null,
                     null,

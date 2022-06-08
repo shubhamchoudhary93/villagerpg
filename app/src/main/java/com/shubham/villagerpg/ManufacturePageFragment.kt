@@ -26,7 +26,8 @@ class ManufacturePageFragment : Fragment() {
     private var user = User()
     private lateinit var inventoryDatabase: InventoryDatabaseDao
     private lateinit var finishRequirementDatabase: FinishRequirementDatabaseDao
-    lateinit var mainHandler: Handler
+
+    //lateinit var mainHandler: Handler
     private var productList: MutableList<Inventory> = mutableListOf()
     private var factorySelected = 0
     private var foodList: MutableList<Inventory> = mutableListOf()
@@ -35,27 +36,26 @@ class ManufacturePageFragment : Fragment() {
     private val ready = "ready"
     private lateinit var oldColors: ColorStateList
 
-    private val updateScreenTask = object : Runnable {
-        override fun run() {
-            user.money++
-            for (i in 0..7) {
-                if (user.factory[i].status == 1) {
-                    if (System.currentTimeMillis() >= user.factory[i].stopTime) {
-                        user.factory[i].status = 2
-                    }
-                }
-
-                if (user.kitchen[i].status == 1) {
-                    if (System.currentTimeMillis() >= user.kitchen[i].stopTime) {
-                        user.kitchen[i].status = 2
-                    }
-                }
-            }
-
-            setScreenData()
-            mainHandler.postDelayed(this, 1000)
-        }
-    }
+//    private val updateScreenTask = object : Runnable {
+//        override fun run() {
+//            for (i in 0..7) {
+//                if (user.factory[i].status == 1) {
+//                    if (System.currentTimeMillis() >= user.factory[i].stopTime) {
+//                        user.factory[i].status = 2
+//                    }
+//                }
+//
+//                if (user.kitchen[i].status == 1) {
+//                    if (System.currentTimeMillis() >= user.kitchen[i].stopTime) {
+//                        user.kitchen[i].status = 2
+//                    }
+//                }
+//            }
+//
+//            setScreenData()
+//            mainHandler.postDelayed(this, 1000)
+//        }
+//    }
 
     private fun setScreenData() {
         user = UserFunctions.calculateLevel(user)
@@ -107,7 +107,7 @@ class ManufacturePageFragment : Fragment() {
             }
         }
 
-        mainHandler = Handler(Looper.getMainLooper())
+        //mainHandler = Handler(Looper.getMainLooper())
 
         inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
         finishRequirementDatabase =
@@ -151,6 +151,7 @@ class ManufacturePageFragment : Fragment() {
                         binding.productDropdown.adapter = adapter
                     }
                     1 -> {
+                        binding.manufacturePage.visibility = View.GONE
                         Toast.makeText(
                             context,
                             "not ready - ${(user.factory[i].stopTime - System.currentTimeMillis()) / 1000} seconds left",
@@ -198,6 +199,7 @@ class ManufacturePageFragment : Fragment() {
                         binding.foodDropdown.adapter = adapter
                     }
                     1 -> {
+                        binding.kitchenPage.visibility = View.GONE
                         Toast.makeText(
                             context,
                             "not ready - ${(user.kitchen[i].stopTime - System.currentTimeMillis()) / 1000} seconds left",
@@ -311,7 +313,7 @@ class ManufacturePageFragment : Fragment() {
             }
 
         binding.manufactureButton.setOnClickListener {
-            if (productList.size > 1) {
+            if (productList.size >= 1) {
                 val productSelected = productList[binding.productDropdown.selectedItemPosition]
                 if (productSelected.cost <= user.money) {
                     val requirementList = finishRequirementDatabase.getByRequirementID(
@@ -325,13 +327,14 @@ class ManufacturePageFragment : Fragment() {
                             ?.let { it1 -> inventoryList.add(it1) }
                     }
 
-                    var canManufacture = false
+                    var canManufacture = 0
                     for (i in requirementList.indices) {
-                        canManufacture =
-                            requirementList[i].quantity <= inventoryList[i].quantity
+                        if (requirementList[i].quantity <= inventoryList[i].quantity) canManufacture += 1
                     }
 
-                    if (canManufacture) {
+                    println(canManufacture)
+                    println(requirementList.size)
+                    if (canManufacture == requirementList.size) {
                         user.money -= productSelected.cost
                         for (i in requirementList.indices) {
                             inventoryList[i].quantity =
@@ -355,7 +358,7 @@ class ManufacturePageFragment : Fragment() {
         }
 
         binding.cookButton.setOnClickListener {
-            if (foodList.size > 1) {
+            if (foodList.size >= 1) {
                 val foodSelected = foodList[binding.foodDropdown.selectedItemPosition]
                 if (foodSelected.cost <= user.money) {
                     val requirementList = finishRequirementDatabase.getByRequirementID(
@@ -369,14 +372,12 @@ class ManufacturePageFragment : Fragment() {
                             ?.let { it1 -> inventoryList.add(it1) }
                     }
 
-                    var canCook = false
+                    var canCook = 0
                     for (i in requirementList.indices) {
-                        canCook =
-                            requirementList[i].quantity <= inventoryList[i].quantity
-                        println(canCook)
+                        if (requirementList[i].quantity <= inventoryList[i].quantity) canCook += 1
                     }
 
-                    if (canCook) {
+                    if (canCook == requirementList.size) {
                         user.money -= foodSelected.cost
                         for (i in requirementList.indices) {
                             inventoryList[i].quantity =
@@ -403,12 +404,12 @@ class ManufacturePageFragment : Fragment() {
         super.onPause()
         user.lastOnline = System.currentTimeMillis()
         UserFunctions.saveUser(user, data)
-        mainHandler.removeCallbacks(updateScreenTask)
+//        mainHandler.removeCallbacks(updateScreenTask)
     }
 
     override fun onResume() {
         super.onResume()
         user = UserFunctions.fetchUser(data)
-        mainHandler.post(updateScreenTask)
+//        mainHandler.post(updateScreenTask)
     }
 }

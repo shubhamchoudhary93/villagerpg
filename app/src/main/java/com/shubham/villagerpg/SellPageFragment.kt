@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.shubham.villagerpg.data.*
+import com.shubham.villagerpg.data.UserFunctions.calculateLevel
 import com.shubham.villagerpg.databinding.SellPageBinding
 
 class SellPageFragment : Fragment() {
@@ -23,10 +24,8 @@ class SellPageFragment : Fragment() {
     private var inventorySelected: Inventory = Inventory()
     private var max = 0
 
-    lateinit var mainHandler: Handler
-
     private fun setScreenData() {
-        user = UserFunctions.calculateLevel(user)
+        user = calculateLevel(user)
         binding.head.name.text = user.name
         binding.head.money.text = user.money.toString()
         binding.head.gold.text = user.gold.toString()
@@ -44,9 +43,7 @@ class SellPageFragment : Fragment() {
             inflater,
             R.layout.sell_page, container, false
         )
-        mainHandler = Handler(Looper.getMainLooper())
-
-        data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
+         data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
         user = if (data.contains("User")) {
             UserFunctions.fetchUser(data)
         } else {
@@ -92,6 +89,7 @@ class SellPageFragment : Fragment() {
                 inventoryDatabase.update(inventorySelected)
                 user.money += sellAmount
                 binding.sellButtonLayout.visibility = View.GONE
+                setScreenData()
                 fetchAdaptor()
             } else Toast.makeText(context, "Max quantity can be $max.", Toast.LENGTH_SHORT).show()
         }

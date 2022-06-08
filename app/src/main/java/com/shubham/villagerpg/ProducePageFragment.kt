@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import com.shubham.villagerpg.data.*
 import com.shubham.villagerpg.databinding.ProducePageBinding
 
-
 class ProducePageFragment : Fragment() {
 
     private lateinit var binding: ProducePageBinding
@@ -150,6 +149,7 @@ class ProducePageFragment : Fragment() {
                         binding.cropDropdown.adapter = adapter
                     }
                     1 -> {
+                        binding.farmPage.visibility = View.GONE
                         Toast.makeText(
                             context,
                             "not ready - ${(user.farm[i - 10000].stopTime - System.currentTimeMillis()) / 1000} seconds left",
@@ -199,6 +199,7 @@ class ProducePageFragment : Fragment() {
                         binding.itemDropdown.adapter = adapter
                     }
                     1 -> {
+                        binding.producePage.visibility = View.GONE
                         Toast.makeText(
                             context,
                             "not ready - ${(user.camp[i - 30000].stopTime - System.currentTimeMillis()) / 1000} seconds left",

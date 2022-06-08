@@ -45,8 +45,6 @@ class BuyPageFragment : Fragment() {
             R.layout.buy_page, container, false
         )
 
-        setScreenData()
-
         data = requireActivity().getSharedPreferences("VillageRPGData", Context.MODE_PRIVATE)
         user = if (data.contains("User")) {
             UserFunctions.fetchUser(data)
@@ -61,6 +59,7 @@ class BuyPageFragment : Fragment() {
         binding.buyButtonLayout.visibility = View.GONE
         inventoryDatabase = InventoryDatabase.getInstance(requireContext()).inventoryDatabaseDao
         fetchAdaptor()
+        setScreenData()
         setListeners()
         val text = "Market: Buy"
         binding.head.title.text = text
@@ -93,6 +92,7 @@ class BuyPageFragment : Fragment() {
                 inventoryDatabase.update(inventorySelected)
                 user.money -= cost
                 binding.buyButtonLayout.visibility = View.GONE
+                setScreenData()
                 fetchAdaptor()
             } else Toast.makeText(context, "Max quantity can be $max.", Toast.LENGTH_SHORT).show()
         }

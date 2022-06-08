@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,12 +78,17 @@ class QuestDetailsPageFragment : Fragment() {
         var text = ""
         if (requirementList != null) {
             for (i in requirementList.indices) {
-                text =
-                    text + requirementList[i].inventory + " " + requirementList[i].quantity + "\n"
+                text += requirementList[i].inventory + " "
+                val inventoryValue = inventoryDatabase.getName(requirementList[i].inventory)
+                if (inventoryValue != null) {
+                    if (requirementList[i].quantity > inventoryValue.quantity)
+                        text += "<font color=#FF0000>" + requirementList[i].quantity.toString() + "</font>" + "<br>"
+                    else text += requirementList[i].quantity.toString() + "<br>"
+                }
             }
         }
 
-        binding.requirements.text = text
+        binding.requirements.text = Html.fromHtml(text)
 
         val rewardList = quest?.name?.let {
             questRewardDatabase.getByName(
@@ -93,28 +99,28 @@ class QuestDetailsPageFragment : Fragment() {
         text = ""
         if (rewardList != null) {
             for (i in rewardList.indices) {
-                text =
-                    text + rewardList[i].inventory + " " + rewardList[i].quantity + "\n"
+                text += rewardList[i].inventory + " "
+                text += rewardList[i].quantity.toString() + "<br>"
             }
         }
 
-        binding.rewards.text = text
+        binding.rewards.text = Html.fromHtml(text)
         val title = "Quest Details"
         binding.head.title.text = title
 
         binding.collect.setOnClickListener {
             if (requirementList != null) {
-                var trueCheck = false
+                var trueCheck = 0
                 for (i in requirementList.indices) {
                     val inventory = requirementList[i].inventory
                     val quantity = requirementList[i].quantity
 
                     val inventoryValue = inventoryDatabase.getName(inventory)
                     if (inventoryValue != null) {
-                        trueCheck = inventoryValue.quantity >= quantity
+                        if (inventoryValue.quantity >= quantity) trueCheck += 1
                     }
                 }
-                if (trueCheck) {
+                if (trueCheck == requirementList.size) {
                     for (i in requirementList.indices) {
                         val inventory = requirementList[i].inventory
                         val quantity = requirementList[i].quantity

@@ -28,11 +28,10 @@ object DatabaseCreate {
         inventoryDatabase.insert(Inventory(50000,"Pepper Paste","food",0,0,0,10,60000,1,0,"Pepper",0,0,100))
         inventoryDatabase.insert(Inventory(50001,"Carrot Paste","food",0,0,0,20,60000,2,0,"Carrot",0,0,200))
 
-        finishRequirementDatabase.insert(FinishRequirement(0,"Stool","Board",1))
-        finishRequirementDatabase.insert(FinishRequirement(0,"Stool","Nail",4))
-        finishRequirementDatabase.insert(FinishRequirement(0,"Axe","Board",1))
-        finishRequirementDatabase.insert(FinishRequirement(0,"Axe","Iron",1))
-        finishRequirementDatabase.insert(FinishRequirement(0,"Axe","Stone",1))
+        finishRequirementDatabase.insert(FinishRequirement(0,"Stool","Wood",1))
+        finishRequirementDatabase.insert(FinishRequirement(0,"Stool","Stone",4))
+        finishRequirementDatabase.insert(FinishRequirement(0,"Axe","Wood",10))
+        finishRequirementDatabase.insert(FinishRequirement(0,"Axe","Stone",10))
 
         questDatabase.insert(Quest(0, "Quest 1", "Need Food","Pepper", 5, "", 0, 0))
         questDatabase.insert(Quest(0, "Quest 1", "Need Food","Carrot", 5, "", 0, 0))
